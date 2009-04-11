@@ -1,0 +1,18 @@
+dogfood (working title)
+
+the lightest web-browser ever.
+
+this is a simple python wrapper on WebKit/GTK+.
+
+plugins are turned off because flash freezes up webkit on my box.
+
+keyboard acceleration:
+
+  C-l focus the location bar, select all (Enter, of course, initiates
+      navigation)
+  C-w close the current window
+  C-q quit the application, closing all open windows in this process
+  C-p previous page (history back)
+  C-n next page (history forward)
+
+see the file thoughts for what needs to happen next.
