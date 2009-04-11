@@ -15,6 +15,7 @@ keyboard acceleration:
   C-p previous page (history back)
   C-n next page (history forward)
   C-' select the statusbar to enter commands
+  C-f select the statusbar with '/' entered as a command already
 
 right now the only command implemented is "/text" to search for text; hit
 entry to keep searching to the next match.

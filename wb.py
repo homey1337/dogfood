@@ -151,6 +151,10 @@ class WebBrowser:
           self.webview.go_forward()
         elif event.keyval == gtk.keysyms.p:
           self.webview.go_back()
+        elif event.keyval == gtk.keysyms.f:
+          self.statusbar.grab_focus()
+          self.statusbar.set_text('/')
+          self.statusbar.set_position(-1)
       else:
         "not too many keys here!"
     self.window.connect('key-release-event', krl)
