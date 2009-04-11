@@ -32,7 +32,15 @@ class WebBrowser:
     elif url.find('://') < 0:
       url = 'http://%s' % url
     self.webview.open(url)
-
+  
+  def exec_command(self, cmd):
+    if cmd.startswith('/'):
+      self.webview.search_text(cmd[1:], False, True, True)
+    else:
+      l = self.statusbar.get_text_length()
+      self.statusbar.set_text('%s < unknown command' % self.statusbar.get_text())
+      self.statusbar.select_region(l, -1)
+  
   def __init__(self):
     WebBrowser.WB_COUNT += 1
 
@@ -109,9 +117,10 @@ class WebBrowser:
     vb.pack_start(gtk.HSeparator(), False, True)
 
     self.statusbar = gtk.Entry()
-    #self.statusbar.set_alignment(0, 0)
-    self.statusbar.set_property('editable', False)
     self.statusbar.set_property('has-frame', False)
+    def act_sb(entry):
+      self.exec_command(entry.get_text())
+    self.statusbar.connect('activate', act_sb)
     vb.pack_start(self.statusbar, False, True)
     
     self.sb_timeout = None
@@ -128,6 +137,12 @@ class WebBrowser:
         if event.keyval == gtk.keysyms.l:
           self.location.grab_focus()
           self.location.select_region(0, -1)
+        elif event.keyval == gtk.keysyms.quoteright:
+          self.statusbar.grab_focus()
+          self.statusbar.select_region(0, -1)
+          if self.sb_timeout is not None:
+            gobject.source_remove(self.sb_timeout)
+            self.sb_timeout = None
         elif event.keyval == gtk.keysyms.q:
           gtk.main_quit()
         elif event.keyval == gtk.keysyms.w:

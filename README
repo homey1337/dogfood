@@ -14,5 +14,9 @@ keyboard acceleration:
   C-q quit the application, closing all open windows in this process
   C-p previous page (history back)
   C-n next page (history forward)
+  C-' select the statusbar to enter commands
+
+right now the only command implemented is "/text" to search for text; hit
+entry to keep searching to the next match.
 
 see the file thoughts for what needs to happen next.
