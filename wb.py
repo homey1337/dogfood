@@ -124,6 +124,15 @@ class WebBrowser:
     self.statusbar = gtk.HBox()
     vb.pack_end(self.statusbar, False, True)
     
+    self.sb_cmd = gtk.Entry()
+    def act_cmd(entry):
+      self.exec_command(entry.get_text())
+    self.sb_cmd.connect('activate', act_cmd)
+    def focus_out_event(widget, event):
+      self.sb_cmd.hide()
+    self.sb_cmd.connect('focus-out-event', focus_out_event)
+    self.statusbar.pack_end(self.sb_cmd)
+    
     # keyboard...
     def krl(widget, event):
       key = event.keyval
@@ -137,11 +146,14 @@ class WebBrowser:
           self.location.grab_focus()
           self.location.select_region(0, -1)
         elif event.keyval == gtk.keysyms.quoteright:
-          self.statusbar.grab_focus()
-          self.statusbar.select_region(0, -1)
-          if self.sb_timeout is not None:
-            gobject.source_remove(self.sb_timeout)
-            self.sb_timeout = None
+          self.sb_cmd.show()
+          self.sb_cmd.grab_focus()
+          self.sb_cmd.select_region(0, -1)
+        elif event.keyval == gtk.keysyms.f:
+          self.sb_cmd.show()
+          self.sb_cmd.grab_focus()
+          self.sb_cmd.set_text('/')
+          self.sb_cmd.set_position(-1)
         elif event.keyval == gtk.keysyms.q:
           gtk.main_quit()
         elif event.keyval == gtk.keysyms.w:
@@ -150,10 +162,6 @@ class WebBrowser:
           self.webview.go_forward()
         elif event.keyval == gtk.keysyms.p:
           self.webview.go_back()
-        elif event.keyval == gtk.keysyms.f:
-          self.statusbar.grab_focus()
-          self.statusbar.set_text('/')
-          self.statusbar.set_position(-1)
       else:
         "not too many keys here!"
     self.window.connect('key-release-event', krl)
@@ -173,12 +181,13 @@ class WebBrowser:
     if cmd.startswith('/'):
       self.webview.search_text(cmd[1:], False, True, True)
     else:
-      l = self.statusbar.get_text_length()
-      self.statusbar.set_text('%s < unknown command' % self.statusbar.get_text())
-      self.statusbar.select_region(l, -1)
+      l = self.sb_cmd.get_text_length()
+      self.sb_cmd.set_text('%s < unknown command' % self.sb_cmd.get_text())
+      self.sb_cmd.select_region(l, -1)
   
   def show_all(self):
     self.window.show_all()
+    self.sb_cmd.hide()
 
 # make it go!
 if __name__ == '__main__':
