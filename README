@@ -8,10 +8,9 @@ plugins are turned off because flash freezes up webkit on my box.
 
 keyboard acceleration:
 
-  C-l focus the location bar, select all (Enter, of course, initiates
-      navigation)
+  C-l select the location bar
   C-w close the current window
-  C-q quit the application, closing all open windows in this process
+  C-q quit the application
   C-p previous page (history back)
   C-n next page (history forward)
   C-' select the statusbar to enter commands

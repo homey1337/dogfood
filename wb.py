@@ -15,32 +15,6 @@ class WebBrowser:
 
   WB_COUNT=0
 
-  def clear_sb_d(self, d=1000):
-    def _c():
-      self.statusbar.set_text('')
-      self.sb_timeout = None
-      return False
-    if self.sb_timeout is not None:
-      gobject.source_remove(self.sb_timeout)
-    self.sb_timeout = gobject.timeout_add(d, _c)
-
-  def load_url(self, url):
-    if url.startswith('g '):
-      url = 'http://www.google.com/search?q=%s' % urllib.quote_plus(url[2:])
-    elif url.startswith('w '):
-      url = 'http://en.wikipedia.org/w/index.php?title=Special%%3ASearch&search=%s&go=Go' % urllib.quote_plus(url[2:])
-    elif url.find('://') < 0:
-      url = 'http://%s' % url
-    self.webview.open(url)
-  
-  def exec_command(self, cmd):
-    if cmd.startswith('/'):
-      self.webview.search_text(cmd[1:], False, True, True)
-    else:
-      l = self.statusbar.get_text_length()
-      self.statusbar.set_text('%s < unknown command' % self.statusbar.get_text())
-      self.statusbar.select_region(l, -1)
-  
   def __init__(self):
     WebBrowser.WB_COUNT += 1
 
@@ -113,6 +87,11 @@ class WebBrowser:
     def web_view_ready(view):
       self.show_all()
     self.webview.connect('web-view-ready', web_view_ready)
+    
+    def download_requested(view, download):
+      download.set_destination_uri('file:///home/homey1337/dl/%s' % download.get_suggested_filename())
+      return True
+    self.webview.connect('download-requested', download_requested)
 
     vb.pack_start(gtk.HSeparator(), False, True)
 
@@ -159,6 +138,32 @@ class WebBrowser:
         "not too many keys here!"
     self.window.connect('key-release-event', krl)
 
+  def clear_sb_d(self, d=1000):
+    def _c():
+      self.statusbar.set_text('')
+      self.sb_timeout = None
+      return False
+    if self.sb_timeout is not None:
+      gobject.source_remove(self.sb_timeout)
+    self.sb_timeout = gobject.timeout_add(d, _c)
+
+  def load_url(self, url):
+    if url.startswith('g '):
+      url = 'http://www.google.com/search?q=%s' % urllib.quote_plus(url[2:])
+    elif url.startswith('w '):
+      url = 'http://en.wikipedia.org/w/index.php?title=Special%%3ASearch&search=%s&go=Go' % urllib.quote_plus(url[2:])
+    elif url.find('://') < 0:
+      url = 'http://%s' % url
+    self.webview.open(url)
+  
+  def exec_command(self, cmd):
+    if cmd.startswith('/'):
+      self.webview.search_text(cmd[1:], False, True, True)
+    else:
+      l = self.statusbar.get_text_length()
+      self.statusbar.set_text('%s < unknown command' % self.statusbar.get_text())
+      self.statusbar.select_region(l, -1)
+  
   def show_all(self):
     self.window.show_all()
 
