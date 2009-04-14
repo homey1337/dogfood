@@ -1,10 +1,10 @@
 # ye olde stupid simple web browser
 
-import os
-import gtk
 import gobject
-import webkit
+import gtk
+import os
 import urllib
+import webkit
 
 gtk.gdk.threads_init()
 
@@ -102,7 +102,7 @@ class WebBrowser:
     self.webview.connect('load-finished', load_finished)
 
     def title_changed(view, frame, title):
-      self.window.set_title('%s - wb' % title)
+      self.window.set_title('%s - %s' % (title, APPNAME))
     self.webview.connect('title-changed', title_changed)
 
     def create_web_view(view, frame):

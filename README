@@ -17,6 +17,26 @@ keyboard acceleration:
   C-f select the statusbar with '/' entered as a command already
 
 right now the only command implemented is "/text" to search for text; hit
-entry to keep searching to the next match.
+enter to keep searching to the next match.
 
-see the file thoughts for what needs to happen next.
+going forward (in no particular order):
+
+* hotkey "open this in kaz" (just in case)
+
+* completion on the url entry
+  this requires keeping some sort of history, which I'm slightly opposed to
+
+* tabs (maybe)
+
+* bookmarks (maybe) or tight integration with some sort of online bookmarks
+  service (most likely my own)
+
+* quick "store this search as a keyword" cuz I like that functionality, and
+  the current way is a pain in the butt
+
+* session (remember where I left off)
+
+* C rewrite (gains what? I'll probably never finish)
+
+* get backspace working correctly (so when an Entry has focus, backspace
+  doesn't go to the previous page)
