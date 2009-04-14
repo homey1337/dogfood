@@ -40,3 +40,6 @@ going forward (in no particular order):
 
 * get backspace working correctly (so when an Entry has focus, backspace
   doesn't go to the previous page)
+
+* better error handling (as in some, at all)
+
