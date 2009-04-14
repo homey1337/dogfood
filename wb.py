@@ -23,7 +23,9 @@ class WebBrowser:
       label = self.sb_widgets[key]
 
     label.set_text(value)
-    self.statusbar.pack_start(label)
+    if label not in self.statusbar.get_children():
+      self.statusbar.pack_start(label)
+    label.show()
     
   def sb_hide(self, key):
     if key in self.sb_widgets:
@@ -70,28 +72,21 @@ class WebBrowser:
     self.webview.connect('hovering-over-link', hovering)
 
     def load_started(view, frame):
-      #self.statusbar.set_text('loading ...')
-      pass
+      self.sb_show('loading', 'loading ...')
     self.webview.connect('load-started', load_started)
 
     def load_committed(view, frame):
-      #self.statusbar.set_text('loading %s ...' % frame.get_uri())
+      self.sb_show('loading', 'loading (0%) ...')
       self.location.set_text(frame.get_uri())
     self.webview.connect('load-committed', load_committed)
 
     def load_progress_changed(view, progress):
-      #q = self.statusbar.get_text()
-      #if q.endswith('...'):
-      #  self.statusbar.set_text('%s (%d%%)' % (q, progress))
-      #else:
-      #  self.statusbar.set_text('%s (%d%%)' % (q[:q.find('...')+4], progress))
-      pass
+      self.sb_show('loading', 'loading (%d%%) ...' % progress)
     self.webview.connect('load-progress-changed', load_progress_changed)
 
     def load_finished(view, frame):
-      #self.statusbar.set_text('done.')
       self.location.set_text(frame.get_uri() or '')
-      #self.clear_sb_d()
+      self.sb_hide('loading')
     self.webview.connect('load-finished', load_finished)
 
     def title_changed(view, frame, title):
