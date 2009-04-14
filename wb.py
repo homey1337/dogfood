@@ -14,10 +14,26 @@ APPNAME='wb'
 class WebBrowser:
 
   WB_COUNT=0
+  
+  def sb_show(self, key, value):
+    if key not in self.sb_widgets:
+      label = self.sb_widgets[key] = gtk.Label()
+      label.set_alignment(0.0, 0.5)
+    else:
+      label = self.sb_widgets[key]
+
+    label.set_text(value)
+    self.statusbar.pack_start(label)
+    
+  def sb_hide(self, key):
+    if key in self.sb_widgets:
+      self.statusbar.remove(self.sb_widgets[key])
 
   def __init__(self):
     WebBrowser.WB_COUNT += 1
-
+    
+    self.sb_widgets = dict()
+    
     self.window = gtk.Window()
     def close(*args):
       WebBrowser.WB_COUNT -= 1
@@ -48,32 +64,34 @@ class WebBrowser:
     
     def hovering(view, title, uri):
       if uri is not None:
-        self.statusbar.set_text(uri)
+        self.sb_show('link', uri)
       else:
-        self.statusbar.set_text('')
+        self.sb_hide('link')
     self.webview.connect('hovering-over-link', hovering)
 
     def load_started(view, frame):
-      self.statusbar.set_text('loading ...')
+      #self.statusbar.set_text('loading ...')
+      pass
     self.webview.connect('load-started', load_started)
 
     def load_committed(view, frame):
-      self.statusbar.set_text('loading %s ...' % frame.get_uri())
+      #self.statusbar.set_text('loading %s ...' % frame.get_uri())
       self.location.set_text(frame.get_uri())
     self.webview.connect('load-committed', load_committed)
 
     def load_progress_changed(view, progress):
-      q = self.statusbar.get_text()
-      if q.endswith('...'):
-        self.statusbar.set_text('%s (%d%%)' % (q, progress))
-      else:
-        self.statusbar.set_text('%s (%d%%)' % (q[:q.find('...')+4], progress))
+      #q = self.statusbar.get_text()
+      #if q.endswith('...'):
+      #  self.statusbar.set_text('%s (%d%%)' % (q, progress))
+      #else:
+      #  self.statusbar.set_text('%s (%d%%)' % (q[:q.find('...')+4], progress))
+      pass
     self.webview.connect('load-progress-changed', load_progress_changed)
 
     def load_finished(view, frame):
-      self.statusbar.set_text('done.')
+      #self.statusbar.set_text('done.')
       self.location.set_text(frame.get_uri() or '')
-      self.clear_sb_d()
+      #self.clear_sb_d()
     self.webview.connect('load-finished', load_finished)
 
     def title_changed(view, frame, title):
@@ -95,15 +113,9 @@ class WebBrowser:
 
     vb.pack_start(gtk.HSeparator(), False, True)
 
-    self.statusbar = gtk.Entry()
-    self.statusbar.set_property('has-frame', False)
-    def act_sb(entry):
-      self.exec_command(entry.get_text())
-    self.statusbar.connect('activate', act_sb)
-    vb.pack_start(self.statusbar, False, True)
+    self.statusbar = gtk.HBox()
+    vb.pack_end(self.statusbar, False, True)
     
-    self.sb_timeout = None
-  
     # keyboard...
     def krl(widget, event):
       key = event.keyval
@@ -138,15 +150,6 @@ class WebBrowser:
         "not too many keys here!"
     self.window.connect('key-release-event', krl)
 
-  def clear_sb_d(self, d=1000):
-    def _c():
-      self.statusbar.set_text('')
-      self.sb_timeout = None
-      return False
-    if self.sb_timeout is not None:
-      gobject.source_remove(self.sb_timeout)
-    self.sb_timeout = gobject.timeout_add(d, _c)
-
   def load_url(self, url):
     if url.startswith('g '):
       url = 'http://www.google.com/search?q=%s' % urllib.quote_plus(url[2:])
@@ -155,7 +158,7 @@ class WebBrowser:
     elif url.find('://') < 0:
       url = 'http://%s' % url
     self.webview.open(url)
-  
+
   def exec_command(self, cmd):
     if cmd.startswith('/'):
       self.webview.search_text(cmd[1:], False, True, True)
