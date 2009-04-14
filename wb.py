@@ -31,10 +31,22 @@ class WebBrowser:
     if key in self.sb_widgets:
       self.statusbar.remove(self.sb_widgets[key])
 
+  def poll_downloads(self):
+    out = list()
+    for download in self.downloads:
+      self.sb_show(download.get_suggested_filename(), '%s (%.0f%%)' % (download.get_suggested_filename(), download.get_progress()*100))
+      if download.get_progress() >= 1.0:
+        out.append(download)
+        self.sb_hide(download.get_suggested_filename())
+    for download in out:
+      self.downloads.remove(download)
+    return True
+
   def __init__(self):
     WebBrowser.WB_COUNT += 1
     
     self.sb_widgets = dict()
+    self.downloads = list()
     
     self.window = gtk.Window()
     def close(*args):
@@ -103,6 +115,7 @@ class WebBrowser:
     
     def download_requested(view, download):
       download.set_destination_uri('file:///home/homey1337/dl/%s' % download.get_suggested_filename())
+      self.downloads.append(download)
       return True
     self.webview.connect('download-requested', download_requested)
 
@@ -144,6 +157,8 @@ class WebBrowser:
       else:
         "not too many keys here!"
     self.window.connect('key-release-event', krl)
+    
+    gobject.timeout_add(1000, self.poll_downloads)
 
   def load_url(self, url):
     if url.startswith('g '):
