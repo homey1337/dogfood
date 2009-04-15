@@ -124,6 +124,8 @@ class WebBrowser:
     self.statusbar = gtk.HBox()
     vb.pack_end(self.statusbar, False, True)
     
+    self.statusbar.pack_end(gtk.Label(), False, False) # just something so the sb doesn't autohide
+    
     self.sb_cmd = gtk.Entry()
     def act_cmd(entry):
       self.exec_command(entry.get_text())
