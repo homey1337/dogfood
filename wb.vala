@@ -1,13 +1,17 @@
 public class WebBrowser : Object {
-  public Gtk.Window window;
-  public Gtk.Entry location;
-  public WebKit.WebView webview;
-  public Gtk.Entry statusbar;
+  Gtk.Window window;
+  Gtk.Entry location;
+  WebKit.WebView webview;
+  Gtk.HBox statusbar;
+  Gtk.Entry sb_cmd;
+  Gee.HashMap<string, Gtk.Widget> sb_widgets;
   
-  public void init() {
+  public WebBrowser() {
     this.window = new Gtk.Window(Gtk.WindowType.TOPLEVEL);
     this.window.title = "vwb";
     this.window.destroy += Gtk.main_quit;
+
+    this.sb_widgets = new Gee.HashMap<string, Gtk.Widget>();
 
     /*
        UI
@@ -17,13 +21,24 @@ public class WebBrowser : Object {
     this.window.add(vbox);
     
     this.location = new Gtk.Entry();
+    this.location.set_has_frame(false);
     vbox.pack_start(this.location, false, true, 0);
+    
+    vbox.pack_start(new Gtk.HSeparator(), false, true, 0);
     
     this.webview = new WebKit.WebView();
     vbox.pack_start(this.webview, true, true, 0);
     
-    this.statusbar = new Gtk.Entry();
+    vbox.pack_start(new Gtk.HSeparator(), false, true, 0);
+
+    this.statusbar = new Gtk.HBox(false, 0);
     vbox.pack_start(this.statusbar, false, true, 0);
+    
+    this.statusbar.pack_end(new Gtk.Label(""), false, true, 0); // avoid "autohide"
+
+    this.sb_cmd = new Gtk.Entry();
+    this.sb_cmd.set_has_frame(false);
+    this.statusbar.pack_end(this.sb_cmd, false, true, 0);
 
     /*
       Signals
@@ -33,18 +48,12 @@ public class WebBrowser : Object {
       this.load_url(source.get_text());
     };
 
-    this.statusbar.activate += (source) => {
+    this.sb_cmd.activate += (source) => {
       this.run_command(source.get_text());
     };
     
     this.webview.hovering_over_link += (view, title, uri) => {
-      // TODO: file a bug against vala so webkit has nullable strings in this signal
       // TODO: better statusbar :)
-      if (uri != null) {
-        this.statusbar.set_text(uri);
-      } else {
-        this.statusbar.set_text("");
-      }
     };
     
     // TODO: other signals
@@ -52,6 +61,7 @@ public class WebBrowser : Object {
   
   public void show_all() {
     this.window.show_all();
+    this.sb_cmd.hide();
   }
 
   public void load_url(string url) {
@@ -77,10 +87,9 @@ static int main(string[] args) {
   Gtk.init(ref args);
 
   var wb = new WebBrowser();
-  wb.init();
   wb.show_all();
 
-  wb.webview.open("http://google.com/");
+  wb.load_url("http://google.com/");
 
   Gtk.main();
   return 0;

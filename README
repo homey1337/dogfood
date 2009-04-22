@@ -43,3 +43,6 @@ going forward (in no particular order):
 
 * better error handling (as in some, at all)
 
+* vala version doesn't work at Yukon
+  on an eth connection?
+  python version works fine?
