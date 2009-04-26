@@ -175,6 +175,8 @@ class WebBrowser:
       url = 'http://www.google.com/search?q=%s' % urllib.quote_plus(url[2:])
     elif url.startswith('w '):
       url = 'http://en.wikipedia.org/w/index.php?title=Special%%3ASearch&search=%s&go=Go' % urllib.quote_plus(url[2:])
+    elif url.startswith('b '):
+      url = 'http://www.gnpcb.org/esv/search/?q=%s' % urllib.quote_plus(url[2:])
     elif url.find('://') < 0:
       url = 'http://%s' % url
     self.webview.open(url)
