@@ -3,6 +3,7 @@
 import gobject
 import gtk
 import os
+import subprocess
 import urllib
 import webkit
 
@@ -89,7 +90,8 @@ class WebBrowser:
 
     def load_committed(view, frame):
       self.sb_show('loading', 'loading (0%) ...')
-      self.location.set_text(frame.get_uri())
+      if frame.get_uri() != 'about:blank':
+        self.location.set_text(frame.get_uri())
     self.webview.connect('load-committed', load_committed)
 
     def load_progress_changed(view, progress):
@@ -97,7 +99,8 @@ class WebBrowser:
     self.webview.connect('load-progress-changed', load_progress_changed)
 
     def load_finished(view, frame):
-      self.location.set_text(frame.get_uri() or '')
+      if frame.get_uri() != 'about:blank':
+        self.location.set_text(frame.get_uri() or '')
       self.sb_hide('loading')
     self.webview.connect('load-finished', load_finished)
 
@@ -177,6 +180,11 @@ class WebBrowser:
       url = 'http://en.wikipedia.org/w/index.php?title=Special%%3ASearch&search=%s&go=Go' % urllib.quote_plus(url[2:])
     elif url.startswith('b '):
       url = 'http://www.gnpcb.org/esv/search/?q=%s' % urllib.quote_plus(url[2:])
+    elif url.startswith('man '):
+      page = url[4:]
+      manp = subprocess.Popen('BROWSER="cat %%s" man --html %s' % page, shell=True, stdout=subprocess.PIPE)
+      self.webview.load_html_string(manp.stdout.read(), '')
+      return None # don't want to call open() today!
     elif url.find('://') < 0:
       url = 'http://%s' % url
     self.webview.open(url)
