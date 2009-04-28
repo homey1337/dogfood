@@ -184,6 +184,7 @@ class WebBrowser:
       page = url[4:]
       manp = subprocess.Popen('BROWSER="cat %%s" man --html %s' % page, shell=True, stdout=subprocess.PIPE)
       self.webview.load_html_string(manp.stdout.read(), '')
+      self.location.set_text('man %s' % page)
       return None # don't want to call open() today!
     elif url.find('://') < 0:
       url = 'http://%s' % url
