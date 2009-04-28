@@ -3,6 +3,7 @@
 import gobject
 import gtk
 import os
+import re
 import subprocess
 import urllib
 import webkit
@@ -174,20 +175,24 @@ class WebBrowser:
     gobject.timeout_add(1000, self.poll_downloads)
 
   def load_url(self, url):
-    if url.startswith('g '):
-      url = 'http://www.google.com/search?q=%s' % urllib.quote_plus(url[2:])
-    elif url.startswith('w '):
-      url = 'http://en.wikipedia.org/w/index.php?title=Special%%3ASearch&search=%s&go=Go' % urllib.quote_plus(url[2:])
-    elif url.startswith('b '):
-      url = 'http://www.gnpcb.org/esv/search/?q=%s' % urllib.quote_plus(url[2:])
-    elif url.startswith('man '):
+    if url.startswith('man '):
       page = url[4:]
       manp = subprocess.Popen('BROWSER="cat %%s" man --html %s' % page, shell=True, stdout=subprocess.PIPE)
       self.webview.load_html_string(manp.stdout.read(), '')
       self.location.set_text('man %s' % page)
       return None # don't want to call open() today!
-    elif url.find('://') < 0:
-      url = 'http://%s' % url
+
+    repls = [(re.compile('g (.*)'), r'http://www.google.com/search?q=\1'),
+             (re.compile('w (.*)'), r'http://en.wikipedia.org/w/index.php?title=Special%3ASearch&search=\1&go=Go'),
+             (re.compile('b (.*)'), r'http://www.gnpcb.org/esv/search/?q=\1'),
+             (re.compile('([a-z]*://.*)'), r'\1'),
+             (re.compile('(.*)'), r'http://\1')]
+
+    for r, s in repls:
+      if r.match(url):
+        url = r.sub(s, url)
+        break
+
     self.webview.open(url)
 
   def exec_command(self, cmd):
