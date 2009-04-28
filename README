@@ -38,6 +38,9 @@ going forward (in no particular order):
 
 * C rewrite (gains what? I'll probably never finish)
 
+* vala rewrite (lighter and faster! ... but I'll still probably never
+  finish)
+
 * get backspace working correctly (so when an Entry has focus, backspace
   doesn't go to the previous page)
 
