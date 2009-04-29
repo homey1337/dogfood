@@ -211,7 +211,7 @@ class WebBrowser:
 if __name__ == '__main__':
   import sys
   
-  if not os.fork():
+  if os.fork():
     sys.exit()
 
   wb = WebBrowser()
