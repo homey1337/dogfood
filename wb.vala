@@ -4,14 +4,11 @@ public class WebBrowser : Object {
   WebKit.WebView webview;
   Gtk.HBox statusbar;
   Gtk.Entry sb_cmd;
-  Gee.HashMap<string, Gtk.Widget> sb_widgets;
   
   public WebBrowser() {
     this.window = new Gtk.Window(Gtk.WindowType.TOPLEVEL);
     this.window.title = "vwb";
     this.window.destroy += Gtk.main_quit;
-
-    this.sb_widgets = new Gee.HashMap<string, Gtk.Widget>();
 
     /*
        UI

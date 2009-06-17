@@ -1,0 +1,14 @@
+Wow. So much potential.
+
+Weirdness:
+
+* sometimes this doesn't work (only at Yukon, wtf?)
+
+* plugins work for Vala but not Python
+
+* the Vala crew still doesn't have the right signature for
+  hovering_over_link ... I care less and less as I head toward porting
+  vimperator
+
+* no DOM access (grrr) ... except that I can execute arbitrary javascript
+  (hmm)
